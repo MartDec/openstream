@@ -5,7 +5,7 @@ export default class AddPasswordToUsers extends BaseSchema {
 
   public async up () {
     this.schema.alterTable(this.tableName, (table) => {
-      table.string('password', 255)
+      table.string('password', 255).notNullable()
     })
   }
 
