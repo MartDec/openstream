@@ -15,9 +15,26 @@ export default class SessionController {
       const user = await this.createUser({ email, username, password })
       const token = await auth.attempt(email, password)
 
-      return { ...user.toJSON(), token}
+      return { ...user.toJSON(), token }
     } catch (error) {
       throw new Exception(error.message, 500)
+    }
+  }
+
+  public async login ({ auth, request }: HttpContextContract) {
+    const { email, password } = request.all()
+    if ([email, password].includes(undefined)) {
+      throw new BadRequestException('Fields are missing')
+    }
+
+    try {
+      const user = await User.findByOrFail('email', email)
+      const token = await auth.attempt(email, password)
+
+      return { ...user.toJSON(), token }
+    } catch (error) {
+      console.log(error)
+      throw new Exception(error.message)
     }
   }
 

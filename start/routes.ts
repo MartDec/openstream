@@ -25,3 +25,4 @@ Route.get('/', async () => {
 })
 
 Route.post('/register', 'SessionController.register')
+Route.post('/login', 'SessionController.login')
