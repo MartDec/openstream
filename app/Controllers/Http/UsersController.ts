@@ -43,4 +43,19 @@ export default class UsersController {
 
     return user.toJSON()
   }
+
+  public async delete ({ auth, request }: HttpContextContract) {
+    const id = request.param('id')
+    const user = await User.find(id)
+    if (!user) {
+      throw new Exception('User not found', 404)
+    }
+
+    await auth.use('api').revoke()
+    await user.delete()
+    return {
+      error: false,
+      message: 'User successfully deleted',
+    }
+  }
 }
