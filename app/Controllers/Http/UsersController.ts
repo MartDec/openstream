@@ -5,17 +5,28 @@ import User from 'App/Models/User'
 
 export default class UsersController {
   public async listAll ({ request }: HttpContextContract) {
-    try {
-      const { page, limit } = request.params()
-      const users = await Database
-        .from('users')
-        .select('id', 'username', 'email', 'created_at', 'updated_at')
-        .paginate(page, limit)
+    const { page, limit } = request.params()
+    const usersPagination = await Database
+      .from('users')
+      .select('id', 'username', 'email', 'created_at', 'updated_at')
+      .paginate(page, limit)
 
-      return users.toJSON()
-    } catch (error) {
-      throw new Exception(error.message)
+    const users = usersPagination.toJSON()
+    if (users.data.length < 1) {
+      throw new Exception('No users found', 404)
     }
+
+    return users
+  }
+
+  public async find ({ request }: HttpContextContract) {
+    const id = request.param('id')
+    const user = await User.find(id)
+    if (!user) {
+      throw new Exception('User not found', 404)
+    }
+
+    return user.toJSON()
   }
 
   public async update ({ request }: HttpContextContract) {
