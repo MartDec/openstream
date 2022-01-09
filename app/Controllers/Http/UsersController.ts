@@ -32,15 +32,15 @@ export default class UsersController {
   public async update ({ request }: HttpContextContract) {
     const userId = request.param('id')
     const { email, password, username } = request.all()
-    try {
-      const user = await User.findOrFail(userId)
-      await user
-        .merge({ email, password, username })
-        .save()
-
-      return user.toJSON()
-    } catch (error) {
-      throw new Exception(error.message)
+    const user = await User.find(userId)
+    if (!user) {
+      throw new Exception('User not found', 404)
     }
+
+    await user
+      .merge({ email, password, username })
+      .save()
+
+    return user.toJSON()
   }
 }
