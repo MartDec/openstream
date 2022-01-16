@@ -42,6 +42,16 @@ export default class SongsController {
     return songs
   }
 
+  public async findSong ({ request }: HttpContextContract) {
+    const id = request.param('id')
+    const song = await Song.find(id)
+    if (!song) {
+      throw new Exception('Song not found', 404)
+    }
+
+    return song.toJSON()
+  }
+
   private async uploadFile (file: MultipartFileContract, type: string): Promise<string> {
     this.updateFileName(file)
     file.move(Application.publicPath(type))
