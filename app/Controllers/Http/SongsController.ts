@@ -3,6 +3,7 @@ import { Exception } from '@adonisjs/core/build/standalone'
 import Application from '@ioc:Adonis/Core/Application'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Song from 'App/Models/Song'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class SongsController {
   public async createSong ({ request }: HttpContextContract) {
@@ -25,6 +26,20 @@ export default class SongsController {
 
     await song.save()
     return song.toJSON()
+  }
+
+  public async listSongs ({ request }: HttpContextContract) {
+    const { page, limit } = request.params()
+    const songsPagination = await Database
+      .from('songs')
+      .paginate(page, limit)
+
+    const songs = songsPagination.toJSON()
+    if (songs.data.length < 1) {
+      throw new Exception('No songs found', 404)
+    }
+
+    return songs
   }
 
   private async uploadFile (file: MultipartFileContract, type: string): Promise<string> {
