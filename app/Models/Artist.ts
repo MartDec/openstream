@@ -7,6 +7,8 @@ import {
   HasMany,
   hasMany,
   ModelPaginatorContract,
+  belongsTo,
+  BelongsTo,
 } from '@ioc:Adonis/Lucid/Orm'
 import Song from './Song'
 
@@ -34,8 +36,14 @@ export default class Artist extends BaseModel {
   @column()
   public thumbnail: string
 
+  @column()
+  public artistId: number
+
   @hasMany(() => Song)
   public songs: HasMany<typeof Song>
+
+  @belongsTo(() => Artist)
+  public artist: BelongsTo<typeof Artist>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
