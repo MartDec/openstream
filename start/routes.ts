@@ -21,3 +21,4 @@
 import './routes/session'
 import './routes/songs'
 import './routes/users'
+import './routes/artists'
