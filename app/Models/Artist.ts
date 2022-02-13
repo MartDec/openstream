@@ -3,46 +3,39 @@ import {
   afterFind,
   afterSave,
   BaseModel,
-  BelongsTo,
-  belongsTo,
   column,
+  HasMany,
+  hasMany,
   ModelPaginatorContract,
 } from '@ioc:Adonis/Lucid/Orm'
-import Artist from './Artist'
+import Song from './Song'
 
-export default class Song extends BaseModel {
+export default class Artist extends BaseModel {
   public static paginate (
     page: number, limit: number
-  ): Promise<ModelPaginatorContract<Song>> {
-    return Song
+  ): Promise<ModelPaginatorContract<Artist>> {
+    return Artist
       .query()
-      .preload('artist')
       .paginate(page, limit)
   }
 
   @afterSave()
   @afterFind()
-  public static async preloadArtist (song: Song): Promise<void> {
-    await song.load('artist')
+  public static async preloadSongs (artist: Artist): Promise<void> {
+    await artist.load('songs')
   }
 
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public title: string
-
-  @column()
-  public path: string
+  public name: string
 
   @column()
   public thumbnail: string
 
-  @column()
-  public artistId: number
-
-  @belongsTo(() => Artist)
-  public artist: BelongsTo<typeof Artist>
+  @hasMany(() => Song)
+  public songs: HasMany<typeof Song>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
